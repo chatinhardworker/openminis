@@ -163,6 +163,12 @@ struct ISHTerminalView: View {
         // `.dropFirst()` skips the broker's current value on first attach
         // so a stale URL from an earlier session isn't re-presented.
         .onReceive(MinisOpenURLBroker.shared.$pendingURL.dropFirst().compactMap { $0 }) { url in
+            // A successful shell command may request dismissal via a minis://close_terminal marker.
+            if url.scheme?.lowercased() == "minis", url.host?.lowercased() == "close_terminal" {
+                MinisOpenURLBroker.shared.consume()
+                dismiss()
+                return
+            }
             // Only web schemes are routed here — minis:// resource
             // previews need AIChatView's `handleMinisURLTap` and aren't
             // reachable from the standalone terminal. Consume either way
