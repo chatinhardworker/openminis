@@ -19,6 +19,7 @@ extension Notification.Name {
 ///   minis://share
 ///   minis://views/alarm
 ///   minis://open_terminal[?init_command=…]
+///   minis://close_terminal
 ///   minis://open?session=<sid>&path=<scope-prefixed-path>  (openminis.app launcher round-trip)
 ///   minis://session/<id>      (legacy singular alias)
 ///   minis://sessions/<id>     (canonical — matches minis-sessions-cli)
@@ -69,6 +70,10 @@ enum DeepLinkRouter {
             let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
             coord.terminalInitCommand = components?.queryItems?.first(where: { $0.name == "init_command" })?.value
             coord.showTerminal = true
+
+        case "close_terminal":
+            // Dismiss any terminal overlay through the existing presentation coordinator.
+            NotificationCenter.default.post(name: .dismissAllImmersivePresentations, object: nil)
 
         case "open":
             handleWebAppLauncherReturn(url: url)
