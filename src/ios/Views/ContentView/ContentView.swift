@@ -826,6 +826,7 @@ struct ContentView: View {
         // nothing at all. Clearing it lets the incoming content surface.
         .onReceive(NotificationCenter.default.publisher(for: .dismissAllImmersivePresentations)) { _ in
             if activeToolSheet != nil { activeToolSheet = nil }
+            if showTerminal { showTerminal = false }
         }
         .sheet(item: $sessionToDelete) { session in
             DeleteConfirmSheet(info: $singleDeleteInfo, isLoading: false) {
